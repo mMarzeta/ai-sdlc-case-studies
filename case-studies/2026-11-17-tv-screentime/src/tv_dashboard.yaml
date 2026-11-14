@@ -1,0 +1,141 @@
+title: Telewizory
+views:
+  - title: Przegląd
+    path: telewizory
+    icon: mdi:television-shimmer
+    cards:
+      - type: grid
+        title: Bravia 65 – Salon (Maciej)
+        columns: 2
+        square: false
+        cards:
+          - type: tile
+            entity: binary_sensor.bravia_65_wlaczony
+            name: Zasilanie
+            icon: mdi:television
+          - type: tile
+            entity: sensor.bravia_65_aktywna_aplikacja
+            name: Aktywna aplikacja
+            icon: mdi:apps
+          - type: tile
+            entity: sensor.bravia_65_czas_dzisiaj
+            name: Czas dzisiaj
+            icon: mdi:clock-outline
+            color: blue
+          - type: tile
+            entity: binary_sensor.bravia_65_limit_4h
+            name: Status limitu
+            icon: mdi:timer-alert
+            color: amber
+
+      - type: grid
+        title: Bravia 55 – Salon (Żona)
+        columns: 2
+        square: false
+        cards:
+          - type: tile
+            entity: binary_sensor.bravia_55_wlaczony
+            name: Zasilanie
+            icon: mdi:television
+          - type: tile
+            entity: sensor.bravia_55_aktywna_aplikacja
+            name: Aktywna aplikacja
+            icon: mdi:apps
+          - type: tile
+            entity: sensor.bravia_55_czas_dzisiaj
+            name: Czas dzisiaj
+            icon: mdi:clock-outline
+            color: purple
+          - type: tile
+            entity: binary_sensor.bravia_55_limit_4h
+            name: Status limitu
+            icon: mdi:timer-alert
+            color: amber
+
+      - type: grid
+        title: Czas wg aplikacji dzisiaj
+        columns: 2
+        square: false
+        cards:
+          - type: entities
+            title: Bravia 65 (Maciej)
+            show_header_toggle: false
+            entities:
+              - entity: sensor.bravia_65_smarttube
+                name: SmartTube
+                icon: mdi:youtube
+              - entity: sensor.bravia_65_youtube
+                name: YouTube
+                icon: mdi:youtube
+              - entity: sensor.bravia_65_twitch
+                name: Twitch
+                icon: mdi:twitch
+              - entity: sensor.bravia_65_magentatv
+                name: MagentaTV
+                icon: mdi:television-classic
+              - entity: sensor.bravia_65_prime_video
+                name: Prime Video
+                icon: mdi:video-vintage
+              - entity: sensor.bravia_65_jellyfin
+                name: Jellyfin
+                icon: mdi:filmstrip
+              - entity: sensor.bravia_65_hdmi_tv
+                name: HDMI / TV
+                icon: mdi:video-input-hdmi
+              - entity: sensor.bravia_65_launcher_wygaszacz
+                name: Launcher / Wygaszacz
+                icon: mdi:view-dashboard-outline
+
+          - type: entities
+            title: Bravia 55 (Żona)
+            show_header_toggle: false
+            entities:
+              - entity: sensor.bravia_55_smarttube
+                name: SmartTube
+                icon: mdi:youtube
+              - entity: sensor.bravia_55_youtube
+                name: YouTube
+                icon: mdi:youtube
+              - entity: sensor.bravia_55_magentatv
+                name: MagentaTV
+                icon: mdi:television-classic
+              - entity: sensor.bravia_55_prime_video
+                name: Prime Video
+                icon: mdi:video-vintage
+              - entity: sensor.bravia_55_jellyfin
+                name: Jellyfin
+                icon: mdi:filmstrip
+              - entity: sensor.bravia_55_videostar
+                name: Videostar
+                icon: mdi:play-box-multiple
+              - entity: sensor.bravia_55_hdmi_tv
+                name: HDMI / TV
+                icon: mdi:video-input-hdmi
+              - entity: sensor.bravia_55_launcher_wygaszacz
+                name: Launcher / Wygaszacz
+                icon: mdi:view-dashboard-outline
+
+      - type: history-graph
+        title: Aktywność aplikacji (ostatnie 24h)
+        hours_to_show: 24
+        entities:
+          - entity: sensor.bravia_65_aktywna_aplikacja
+            name: Bravia 65 (Maciej)
+          - entity: sensor.bravia_55_aktywna_aplikacja
+            name: Bravia 55 (Żona)
+
+      - type: history-graph
+        title: Sumaryczny czas włączenia (ostatnie 24h)
+        hours_to_show: 24
+        entities:
+          - entity: sensor.bravia_65_czas_dzisiaj
+            name: Bravia 65 (h)
+          - entity: sensor.bravia_55_czas_dzisiaj
+            name: Bravia 55 (h)
+
+      - type: entities
+        title: Ustawienia limitu
+        show_header_toggle: false
+        entities:
+          - entity: input_number.prog_czas_tv_dziennie
+            name: Dzienny próg powiadomienia (godziny)

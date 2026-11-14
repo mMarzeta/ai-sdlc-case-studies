@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Torrent Drop · Proton VPN Isolated</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #151d2d;
+      --card-border: #23314a;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --radius: 12px;
+      --transition: all 0.2s ease-in-out;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+      line-height: 1.5;
+      padding: 24px 16px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding-bottom: 8px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      font-size: 28px;
+    }
+
+    .brand-title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* VPN Badge */
+    .vpn-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 500;
+      background: rgba(35, 49, 74, 0.5);
+      border: 1px solid var(--card-border);
+      transition: var(--transition);
+    }
+
+    .vpn-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: var(--text-muted);
+    }
+
+    .vpn-connected {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: #34d399;
+    }
+    .vpn-connected .vpn-dot {
+      background-color: var(--success);
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+    }
+
+    .vpn-disconnected {
+      background: rgba(239, 68, 68, 0.12);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #f87171;
+    }
+    .vpn-disconnected .vpn-dot {
+      background-color: var(--danger);
+      box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* Main Card */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Category Selector */
+    .category-section {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .section-label {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+
+    .segmented-control {
+      display: inline-flex;
+      background: var(--bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 4px;
+      gap: 4px;
+      width: fit-content;
+    }
+
+    .segmented-control input[type="radio"] {
+      display: none;
+    }
+
+    .segmented-control label {
+      padding: 8px 20px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      user-select: none;
+    }
+
+    .segmented-control input[type="radio"]:checked + label {
+      background: var(--accent);
+      color: #0b0f19;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(56, 189, 248, 0.3);
+    }
+
+    /* Drop Zone */
+    .dropzone {
+      border: 2px dashed var(--card-border);
+      border-radius: var(--radius);
+      padding: 36px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+      background: rgba(11, 15, 25, 0.4);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .dropzone:hover, .dropzone.drag-active {
+      border-color: var(--accent);
+      background: rgba(56, 189, 248, 0.05);
+      transform: translateY(-1px);
+    }
+
+    .dropzone-icon {
+      font-size: 40px;
+      line-height: 1;
+    }
+
+    .dropzone-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .dropzone-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .or-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 18px 0 14px;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .or-divider::before,
+    .or-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--card-border);
+    }
+
+    .magnet-form {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .magnet-form input[type="text"] {
+      flex: 1;
+      min-width: 220px;
+      background: rgba(11, 15, 25, 0.7);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 11px 14px;
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .magnet-form input[type="text"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15);
+    }
+
+    .magnet-form input[type="text"]::placeholder {
+      color: var(--text-muted);
+    }
+
+    .magnet-form button {
+      background: var(--accent);
+      color: #0b0f19;
+      border: none;
+      border-radius: 10px;
+      padding: 11px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+
+    .magnet-form button:hover:not(:disabled) {
+      background: var(--accent-hover);
+      color: #ffffff;
+    }
+
+    .magnet-form button:disabled,
+    .magnet-form input[type="text"]:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* Notification / Toast */
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-top: 16px;
+      display: none;
+    }
+
+    .alert-error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid var(--danger);
+      color: #fca5a5;
+    }
+
+    .alert-success {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--success);
+      color: #6ee7b7;
+    }
+
+    /* Jobs Section */
+    .jobs-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .jobs-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .jobs-count {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .job-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 36px 16px;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .job-item {
+      background: rgba(11, 15, 25, 0.5);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: var(--transition);
+    }
+
+    .job-item:hover {
+      border-color: #334155;
+    }
+
+    .job-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .job-name {
+      font-size: 15px;
+      font-weight: 600;
+      word-break: break-all;
+      flex: 1;
+    }
+
+    .job-badges {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-movie {
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      border: 1px solid rgba(99, 102, 241, 0.4);
+    }
+
+    .badge-music {
+      background: rgba(236, 72, 153, 0.2);
+      color: #f472b6;
+      border: 1px solid rgba(236, 72, 153, 0.4);
+    }
+
+    .badge-state {
+      background: rgba(148, 163, 184, 0.15);
+      color: #cbd5e1;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+    }
+
+    .badge-state.done {
+      background: rgba(16, 185, 129, 0.2);
+      color: #6ee7b7;
+      border-color: rgba(16, 185, 129, 0.4);
+    }
+
+    .badge-state.downloading {
+      background: rgba(56, 189, 248, 0.2);
+      color: #7dd3fc;
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+
+    .badge-state.failed {
+      background: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+      border-color: rgba(239, 68, 68, 0.4);
+    }
+
+    .progress-bar-bg {
+      background: var(--bg);
+      border-radius: 9999px;
+      height: 8px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar-fill {
+      background: linear-gradient(90deg, #0284c7, var(--accent));
+      height: 100%;
+      border-radius: 9999px;
+      transition: width 0.3s ease;
+    }
+
+    .progress-bar-fill.done {
+      background: var(--success);
+    }
+
+    .progress-bar-fill.failed {
+      background: var(--danger);
+    }
+
+    .job-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .job-stats {
+      display: flex;
+      gap: 12px;
+    }
+
+    .job-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-action {
+      background: transparent;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-action:hover {
+      border-color: var(--danger);
+      color: #f87171;
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .job-details {
+      font-size: 12px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      background: rgba(15, 23, 42, 0.6);
+      word-break: break-word;
+    }
+
+    .job-details.warning {
+      color: #fde68a;
+      border-left: 3px solid var(--warning);
+    }
+
+    .job-details.error {
+      color: #fca5a5;
+      border-left: 3px solid var(--danger);
+    }
+
+    .job-details.summary {
+      color: #93c5fd;
+      border-left: 3px solid var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="brand-icon">💧</div>
+        <div>
+          <div class="brand-title">Torrent Drop</div>
+          <div class="brand-subtitle">Proton VPN Isolated BitTorrent Downloader</div>
+        </div>
+      </div>
+      <div id="vpnBadge" class="vpn-badge vpn-disconnected">
+        <div class="vpn-dot"></div>
+        <span id="vpnText">Checking VPN status...</span>
+      </div>
+    </header>
+
+    <div class="card">
+      <div class="category-section">
+        <div class="section-label">Select Destination Library</div>
+        <div class="segmented-control">
+          <input type="radio" id="catMovies" name="category" value="movies" checked>
+          <label for="catMovies">🎬 Movie (Jellyfin)</label>
+
+          <input type="radio" id="catMusic" name="category" value="music">
+          <label for="catMusic">🎵 Music (Navidrome)</label>
+        </div>
+      </div>
+
+      <div id="dropzone" class="dropzone">
+        <div class="dropzone-icon">📥</div>
+        <div class="dropzone-title">Drop your .torrent file here, or click to browse</div>
+        <div class="dropzone-desc">Max size 10 MB · Or paste a magnet:? link below</div>
+        <input type="file" id="fileInput" accept=".torrent,application/x-bittorrent" style="display: none;">
+      </div>
+
+      <div class="or-divider"><span>or paste magnet link</span></div>
+
+      <form id="magnetForm" class="magnet-form">
+        <input
+          type="text"
+          id="magnetInput"
+          placeholder="magnet:?xt=urn:btih:..."
+          autocomplete="off"
+          spellcheck="false"
+        >
+        <button type="submit" id="magnetSubmitBtn">Add Magnet</button>
+      </form>
+
+      <div id="alertBox" class="alert"></div>
+    </div>
+
+    <div class="card">
+      <div class="jobs-header">
+        <div class="jobs-title">Downloads & History</div>
+        <div id="jobsCount" class="jobs-count">0 torrents</div>
+      </div>
+      <div id="jobList" class="job-list">
+        <div class="empty-state">No torrents yet. Drop a .torrent file or paste a magnet link above to start downloading.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const dropzone = document.getElementById("dropzone");
+    const fileInput = document.getElementById("fileInput");
+    const magnetForm = document.getElementById("magnetForm");
+    const magnetInput = document.getElementById("magnetInput");
+    const magnetSubmitBtn = document.getElementById("magnetSubmitBtn");
+    const alertBox = document.getElementById("alertBox");
+    const vpnBadge = document.getElementById("vpnBadge");
+    const vpnText = document.getElementById("vpnText");
+    const jobList = document.getElementById("jobList");
+    const jobsCount = document.getElementById("jobsCount");
+
+    let isUploading = false;
+
+    // Helpers
+    function showAlert(message, type = "error") {
+      alertBox.textContent = message;
+      alertBox.className = `alert alert-${type}`;
+      alertBox.style.display = "block";
+      if (type === "success") {
+        setTimeout(() => {
+          alertBox.style.display = "none";
+        }, 5000);
+      }
+    }
+
+    function formatBytes(bytes) {
+      if (!bytes || bytes <= 0) return "0 B";
+      const units = ["B", "KB", "MB", "GB", "TB"];
+      const i = Math.floor(Math.log(bytes) / Math.log(1024));
+      return (bytes / Math.pow(1024, i)).toFixed(1) + " " + units[i];
+    }
+
+    function formatSpeed(bytesPerSec) {
+      if (!bytesPerSec || bytesPerSec <= 0) return "0 B/s";
+      return formatBytes(bytesPerSec) + "/s";
+    }
+
+    function formatEta(seconds) {
+      if (seconds == null || seconds < 0 || seconds >= 8640000) return "∞";
+      if (seconds === 0) return "0s";
+      const h = Math.floor(seconds / 3600);
+      const m = Math.floor((seconds % 3600) / 60);
+      const s = seconds % 60;
+      if (h > 0) return `${h}h ${m}m`;
+      if (m > 0) return `${m}m ${s}s`;
+      return `${s}s`;
+    }
+
+    function escapeHtml(text) {
+      if (!text) return "";
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Drag and Drop
+    dropzone.addEventListener("click", () => fileInput.click());
+
+    ["dragenter", "dragover"].forEach(evtName => {
+      dropzone.addEventListener(evtName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.add("drag-active");
+      });
+    });
+
+    ["dragleave", "drop"].forEach(evtName => {
+      dropzone.addEventListener(evtName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.remove("drag-active");
+      });
+    });
+
+    dropzone.addEventListener("drop", (e) => {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      if (files.length > 0) {
+        handleFileUpload(files[0]);
+      }
+    });
+
+    fileInput.addEventListener("change", (e) => {
+      if (fileInput.files.length > 0) {
+        handleFileUpload(fileInput.files[0]);
+      }
+    });
+
+    async function handleFileUpload(file) {
+      if (isUploading) return;
+      if (!file.name.toLowerCase().endsWith(".torrent") && file.type !== "application/x-bittorrent") {
+        showAlert("Please upload a valid .torrent file.");
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        showAlert("Torrent file exceeds the 10 MB limit.");
+        return;
+      }
+
+      const category = document.querySelector('input[name="category"]:checked')?.value || "movies";
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("category", category);
+
+      isUploading = true;
+      dropzone.style.opacity = "0.6";
+
+      try {
+        const resp = await fetch("/api/torrents", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await resp.json().catch(() => ({}));
+
+        if (!resp.ok) {
+          const errMsg = data.detail || `Upload failed with HTTP ${resp.status}`;
+          showAlert(errMsg, "error");
+        } else {
+          showAlert(`Successfully queued: ${data.name || file.name}`, "success");
+          fileInput.value = "";
+          fetchStatus();
+        }
+      } catch (err) {
+        showAlert(`Network error: ${err.message}`, "error");
+      } finally {
+        isUploading = false;
+        dropzone.style.opacity = "1";
+      }
+    }
+
+    async function handleMagnetSubmit(e) {
+      e.preventDefault();
+      if (isUploading) return;
+
+      const magnet = magnetInput.value.trim();
+      if (!magnet) {
+        showAlert("Please paste a magnet:? link.", "error");
+        return;
+      }
+      if (!/^magnet:\?/i.test(magnet)) {
+        showAlert("Magnet link must start with magnet:?", "error");
+        return;
+      }
+
+      const category = document.querySelector('input[name="category"]:checked')?.value || "movies";
+      isUploading = true;
+      magnetInput.disabled = true;
+      magnetSubmitBtn.disabled = true;
+
+      try {
+        const resp = await fetch("/api/magnets", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ magnet, category }),
+        });
+
+        const data = await resp.json().catch(() => ({}));
+
+        if (!resp.ok) {
+          const errMsg = data.detail || `Magnet submission failed with HTTP ${resp.status}`;
+          showAlert(errMsg, "error");
+        } else {
+          showAlert(`Successfully queued: ${data.name || "magnet"}`, "success");
+          magnetInput.value = "";
+          fetchStatus();
+        }
+      } catch (err) {
+        showAlert(`Network error: ${err.message}`, "error");
+      } finally {
+        isUploading = false;
+        magnetInput.disabled = false;
+        magnetSubmitBtn.disabled = false;
+      }
+    }
+
+    magnetForm.addEventListener("submit", handleMagnetSubmit);
+
+    async function deleteJob(jobId) {
+      const itemEl = document.querySelector(`.job-item[data-id="${jobId}"]`);
+      const jobName = itemEl?.querySelector(".job-name")?.textContent || `Job #${jobId}`;
+      if (!confirm(`Cancel/remove "${jobName}"?`)) return;
+      try {
+        const resp = await fetch(`/api/torrents/${jobId}`, { method: "DELETE" });
+        if (resp.ok) {
+          fetchStatus();
+        } else {
+          const data = await resp.json().catch(() => ({}));
+          showAlert(data.detail || "Failed to remove job", "error");
+        }
+      } catch (err) {
+        showAlert(`Error deleting job: ${err.message}`, "error");
+      }
+    }
+
+    // Status polling
+    async function fetchStatus() {
+      try {
+        const resp = await fetch("/api/status");
+        if (!resp.ok) {
+          vpnBadge.className = "vpn-badge vpn-disconnected";
+          vpnText.textContent = `Server Error (${resp.status})`;
+          return;
+        }
+
+        const data = await resp.json();
+        updateVpnStatus(data.vpn);
+        updateJobs(data.jobs || []);
+      } catch (err) {
+        vpnBadge.className = "vpn-badge vpn-disconnected";
+        vpnText.textContent = "Cannot connect to server";
+      }
+    }
+
+    function updateVpnStatus(vpn) {
+      if (!vpn) return;
+      if (vpn.connected) {
+        vpnBadge.className = "vpn-badge vpn-connected";
+        const loc = [vpn.country, vpn.public_ip].filter(Boolean).join(" · ");
+        vpnText.textContent = `Connected · ${loc || "Active"}`;
+      } else {
+        vpnBadge.className = "vpn-badge vpn-disconnected";
+        vpnText.textContent = `VPN Disconnected (${vpn.status_text || "Blocked"})`;
+      }
+    }
+
+    function formatSubtitleSummary(jsonStr) {
+      if (!jsonStr) return null;
+      try {
+        const s = JSON.parse(jsonStr);
+        const parts = [];
+
+        // IMDb status from Summary: imdb_fixed, imdb_ok
+        if (Array.isArray(s.imdb_fixed) && s.imdb_fixed.length > 0) {
+          parts.push(`IMDb: fixed (${s.imdb_fixed.length})`);
+        } else if (s.imdb_ok > 0) {
+          parts.push("IMDb: ok");
+        }
+
+        // Subtitles status from Summary: subs_downloaded, subs_extracted, subs_encoding_fixed, subs_already_ok, subs_missing
+        const dlCount = Array.isArray(s.subs_downloaded) ? s.subs_downloaded.length : 0;
+        const extCount = Array.isArray(s.subs_extracted) ? s.subs_extracted.length : 0;
+        const encCount = Array.isArray(s.subs_encoding_fixed) ? s.subs_encoding_fixed.length : 0;
+        const totalNew = dlCount + extCount;
+
+        if (totalNew > 0) {
+          const details = [];
+          if (dlCount > 0) details.push(`+${dlCount} downloaded`);
+          if (extCount > 0) details.push(`+${extCount} extracted`);
+          parts.push(`Subtitles: ${details.join(", ")}`);
+        } else if (s.subs_already_ok > 0) {
+          parts.push("Subtitles: present");
+        } else if (Array.isArray(s.subs_missing) && s.subs_missing.length > 0) {
+          parts.push("Subtitles: not found");
+        }
+
+        if (encCount > 0) {
+          parts.push(`UTF-8 fixed: ${encCount}`);
+        }
+
+        if (Array.isArray(s.corrupted_videos) && s.corrupted_videos.length > 0) {
+          parts.push(`Corrupted: ${s.corrupted_videos.length}`);
+        }
+
+        if (Array.isArray(s.skipped_items) && s.skipped_items.length > 0) {
+          parts.push(`Skipped: ${s.skipped_items.length}`);
+        }
+
+        return parts.length > 0 ? parts.join(" · ") : null;
+      } catch {
+        return null;
+      }
+    }
+
+    function updateJobs(jobs) {
+      jobsCount.textContent = `${jobs.length} torrent${jobs.length === 1 ? "" : "s"}`;
+      if (jobs.length === 0) {
+        jobList.innerHTML = `<div class="empty-state">No torrents yet. Drop a .torrent file or paste a magnet link above to start downloading.</div>`;
+        return;
+      }
+
+      jobList.innerHTML = jobs.map(job => {
+        const pct = Math.min(100, Math.max(0, (job.progress * 100))).toFixed(1);
+        const catBadgeClass = job.category === "music" ? "badge-music" : "badge-movie";
+        const isDone = job.state === "done";
+        const isFailed = job.state === "failed";
+        const stateClass = isDone ? "done" : isFailed ? "failed" : job.state;
+        const progressFillClass = isDone ? "done" : isFailed ? "failed" : "";
+
+        let statusText = `${pct}%`;
+        if (job.state === "submitted" || (job.state === "downloading" && job.total_size === 0 && job.progress === 0)) {
+          statusText = "Fetching metadata from DHT/peers...";
+        } else if (job.state === "downloading") {
+          statusText = `${pct}% · ${formatSpeed(job.dlspeed)} · ETA: ${formatEta(job.eta)}`;
+        } else if (job.state === "completed_in_client") {
+          statusText = "Completed · Preparing move...";
+        } else if (job.state === "moving") {
+          statusText = "Moving to library...";
+        } else if (job.state === "post_processing") {
+          statusText = "Matching subtitles & IMDb metadata...";
+        } else if (isDone) {
+          statusText = `100% · Complete (${formatBytes(job.total_size)})`;
+        } else if (isFailed) {
+          statusText = "Failed";
+        }
+
+        const subSummary = formatSubtitleSummary(job.subtitle_summary);
+
+        let extraDetails = "";
+        if (job.error) {
+          extraDetails = `<div class="job-details error">Error: ${escapeHtml(job.error)}</div>`;
+        } else if (job.warning) {
+          extraDetails = `<div class="job-details warning">Warning: ${escapeHtml(job.warning)}</div>`;
+        } else if (subSummary) {
+          extraDetails = `<div class="job-details summary">${escapeHtml(subSummary)}</div>`;
+        }
+
+        const actionLabel = (job.state === "submitted" || job.state === "downloading") ? "Cancel" : "Remove";
+
+        return `
+          <div class="job-item" data-id="${job.id}">
+            <div class="job-top">
+              <div class="job-name">${escapeHtml(job.name)}</div>
+              <div class="job-badges">
+                <span class="badge ${catBadgeClass}">${escapeHtml(job.category)}</span>
+                <span class="badge badge-state ${stateClass}">${escapeHtml(job.state)}</span>
+              </div>
+            </div>
+
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill ${progressFillClass}" style="width: ${pct}%"></div>
+            </div>
+
+            <div class="job-meta">
+              <div class="job-stats">${statusText}</div>
+              <div class="job-actions">
+                <button class="btn-action" onclick="deleteJob(${job.id})">${actionLabel}</button>
+              </div>
+            </div>
+
+            ${extraDetails}
+          </div>
+        `;
+      }).join("");
+    }
+
+    // Start polling
+    fetchStatus();
+    setInterval(fetchStatus, 3000);
+  </script>
+</body>
+</html>

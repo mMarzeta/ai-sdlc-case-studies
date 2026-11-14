@@ -1,0 +1,21 @@
+[project]
+name = "torrent-drop"
+version = "0.1.0"
+description = "LAN-only torrent drop service behind Gluetun VPN with qBittorrent"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "httpx",
+    "python-multipart",
+    "requests",
+    "pytest",
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+testpaths = ["../tests"]
+pythonpath = ["."]
