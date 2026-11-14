@@ -2,6 +2,9 @@
 
 This playbook governs how AI agents write, structure, and promote every article on **MarzTech (`blog.marzeta.pl`)**.
 
+> **MANDATORY PUBLISHING & SCHEDULE RULE:**
+> Never set a Ghost post to `status: published` on your own without explicitly asking the user for permission first. New posts synced to Ghost must always be saved as `status: draft` unless they are queued for a future Tuesday `08:00 UTC` slot (`status: scheduled`).
+
 ---
 
 ## 1. Strategic Goal & Target Audience

@@ -166,7 +166,11 @@ def render_markdown_to_html(md_text: str) -> str:
     return markdown.markdown(body, extensions=["fenced_code", "tables", "sane_lists"])
 
 
-def sync_post_to_ghost(post_dir: Path, ghost_client: GhostAdminClient) -> dict[str, Any]:
+def sync_post_to_ghost(
+    post_dir: Path,
+    ghost_client: GhostAdminClient,
+    allow_publish: bool = False,
+) -> dict[str, Any]:
     camp_path = post_dir / "campaign.yaml"
     campaign = yaml.safe_load(camp_path.read_text(encoding="utf-8"))
     slug = campaign["slug"]
@@ -193,6 +197,8 @@ def sync_post_to_ghost(post_dir: Path, ghost_client: GhostAdminClient) -> dict[s
         rendered_body = render_markdown_to_html(md_path.read_text(encoding="utf-8"))
         full_html = inject_blueprint_html(rendered_body, blueprint_html)
         status = campaign.get("status", "draft")
+        if status == "published" and not allow_publish:
+            status = "draft"
         published_at = campaign.get("scheduled_for") if status == "scheduled" else None
         created = ghost_client.create_post_html(
             title=campaign["title"],

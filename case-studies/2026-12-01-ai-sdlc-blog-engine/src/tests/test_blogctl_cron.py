@@ -119,6 +119,7 @@ def test_sync_post_to_ghost_creates_missing_post_and_persists_id(tmp_path):
     assert "<strong>world</strong>" in fake.created_kwargs["html"]
     assert 'id="ai-sdlc-blueprint"' in fake.created_kwargs["html"]
     assert fake.created_kwargs["featured"] is True
+    assert fake.created_kwargs["status"] == "draft"
     saved_camp = yaml.safe_load((post_dir / "campaign.yaml").read_text(encoding="utf-8"))
     assert saved_camp["ghost_post_id"] == "created_999"
 

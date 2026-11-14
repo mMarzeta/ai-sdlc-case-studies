@@ -4,6 +4,9 @@ Dedicated workspace for authoring technical case studies on `blog.marzeta.pl`, s
 
 Always read **[PLAYBOOK.md](./PLAYBOOK.md)** before drafting or editing any blog post.
 
+> **MANDATORY PUBLISHING RULE (NO UNAPPROVED LIVE PUBLISHING):**
+> Never publish a post (`status: published`) in Ghost on your own without explicitly asking the user for permission first. Every new post synced to Ghost MUST remain `status: draft` unless it is scheduled for a future Tuesday `08:00 UTC` slot (`status: scheduled`). Never set `approved: true` in `campaign.yaml` until the user has explicitly reviewed and approved the draft and pitches.
+
 ---
 
 ## Directory Structure

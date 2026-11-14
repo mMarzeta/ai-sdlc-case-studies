@@ -1,6 +1,6 @@
 # Case Study: Yes, AI Wrote This Blog. No, It’s Not Slop: An Amplifier of Intent (Not a Source of Ideas)
 
-- **Published Article:** [https://blog.marzeta.pl/writing-is-no-longer-proof-of-work-amplifier-of-intent/](https://blog.marzeta.pl/writing-is-no-longer-proof-of-work-amplifier-of-intent/)
+- **Article Status:** `DRAFT` on [blog.marzeta.pl](https://blog.marzeta.pl)
 - **Author:** Maciej Marzęta ([blog.marzeta.pl](https://blog.marzeta.pl/about/))
 - **AI-SDLC Stack:** Gemini 4 Argon (High)
 
