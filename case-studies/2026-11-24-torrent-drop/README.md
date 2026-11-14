@@ -1,6 +1,6 @@
 # Case Study: Spec-Driven AI SDLC in Practice: Shipping a VPN-Isolated Media Pipeline (2,120 LOC, 136 Tests) in One Evening
 
-- **Published Article:** [https://blog.marzeta.pl/spec-driven-ai-sdlc-vpn-torrent-drop-media-pipeline/](https://blog.marzeta.pl/spec-driven-ai-sdlc-vpn-torrent-drop-media-pipeline/)
+- **Article Status:** `DRAFT` on [blog.marzeta.pl](https://blog.marzeta.pl)
 - **Author:** Maciej Marzęta ([blog.marzeta.pl](https://blog.marzeta.pl/about/))
 - **AI-SDLC Stack:** Gemini 4 Argon (High)
 

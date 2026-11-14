@@ -1,6 +1,6 @@
 # Case Study: iOS-Style "Screen Time" for Sony Bravia Google TVs: ADB Polling, Per-App History Stats, and Dual Limit Alerts in Home Assistant
 
-- **Published Article:** [https://blog.marzeta.pl/ios-screen-time-sony-bravia-home-assistant-adb/](https://blog.marzeta.pl/ios-screen-time-sony-bravia-home-assistant-adb/)
+- **Article Status:** `SCHEDULED` on [blog.marzeta.pl](https://blog.marzeta.pl)
 - **Author:** Maciej Marzęta ([blog.marzeta.pl](https://blog.marzeta.pl/about/))
 - **AI-SDLC Stack:** Gemini 4 Argon (High)
 
