@@ -79,6 +79,19 @@ def render_blueprint_html(
     )
 
 
+def strip_blueprint_html(existing_html: str) -> str:
+    pattern_markers = re.compile(
+        re.escape(BLUEPRINT_START_MARKER) + r".*?" + re.escape(BLUEPRINT_END_MARKER),
+        re.DOTALL,
+    )
+    cleaned = pattern_markers.sub("", existing_html)
+    pattern_section = re.compile(
+        r'(?:<hr\s*/?>\s*)?<section[^>]*id=["\']ai-sdlc-blueprint["\'][^>]*>.*?</section>',
+        re.DOTALL | re.IGNORECASE,
+    )
+    return pattern_section.sub("", cleaned).rstrip()
+
+
 def inject_blueprint_html(existing_html: str, blueprint_html: str) -> str:
     pattern_markers = re.compile(
         re.escape(BLUEPRINT_START_MARKER) + r".*?" + re.escape(BLUEPRINT_END_MARKER),

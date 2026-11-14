@@ -9,6 +9,7 @@ def test_live_homepage_renders_minimal_hashimoto_ronacher_theme():
 
     assert "minimal.css" in html
     assert 'class="minimal-intro"' in html
-    assert 'class="minimal-post-row ' in html
-    assert 'class="minimal-post-sub"' in html
+    assert 'class="minimal-post-row"' in html
+    assert 'class="minimal-post-date"' in html
+    assert 'class="minimal-post-title"' in html
     assert "https://github.com/mMarzeta/ai-sdlc-case-studies" in html

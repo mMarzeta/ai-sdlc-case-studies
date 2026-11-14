@@ -21,6 +21,7 @@ from tools.ghost_client import (
     GhostAdminClient,
     inject_blueprint_html,
     render_blueprint_html,
+    strip_blueprint_html,
 )
 from tools.github_showcase import (
     export_case_study,
@@ -179,10 +180,15 @@ def sync_post_to_ghost(
 
     case_study_rel = campaign.get("github_showcase", {}).get("case_study_dir", f"case-studies/{post_dir.name}")
     github_url = f"https://github.com/mMarzeta/ai-sdlc-case-studies/tree/main/{case_study_rel}"
-    blueprint_html = render_blueprint_html(
-        metrics=campaign.get("sdlc_metrics", {}),
-        case_study_url=github_url,
-        summary_points=campaign.get("blueprint_highlights", []),
+    should_inject_bp = bool(campaign.get("inject_blueprint", True))
+    blueprint_html = (
+        render_blueprint_html(
+            metrics=campaign.get("sdlc_metrics", {}),
+            case_study_url=github_url,
+            summary_points=campaign.get("blueprint_highlights", []),
+        )
+        if should_inject_bp
+        else ""
     )
 
     desired_tag_names = campaign.get("tags", [])
@@ -195,7 +201,7 @@ def sync_post_to_ghost(
         if not md_path.exists():
             raise RuntimeError(f"Post not found in Ghost for slug={slug} and no post.md exists to create it")
         rendered_body = render_markdown_to_html(md_path.read_text(encoding="utf-8"))
-        full_html = inject_blueprint_html(rendered_body, blueprint_html)
+        full_html = inject_blueprint_html(rendered_body, blueprint_html) if should_inject_bp else strip_blueprint_html(rendered_body)
         status = campaign.get("status", "draft")
         if status == "published" and not allow_publish:
             status = "draft"
@@ -217,7 +223,7 @@ def sync_post_to_ghost(
     base_html = post.get("html", "")
     if (not base_html or campaign.get("sync_markdown_body", False)) and md_path.exists():
         base_html = render_markdown_to_html(md_path.read_text(encoding="utf-8"))
-    updated_html = inject_blueprint_html(base_html, blueprint_html)
+    updated_html = inject_blueprint_html(base_html, blueprint_html) if should_inject_bp else strip_blueprint_html(base_html)
 
     existing_tags = [{"name": t["name"]} for t in post.get("tags", []) if not t["name"].startswith("#Import")]
     existing_names_lower = {t["name"].lower() for t in existing_tags}
