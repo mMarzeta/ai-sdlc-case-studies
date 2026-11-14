@@ -1,0 +1,15 @@
+<article class="minimal-post-row" data-year="{{date format="YYYY"}}">
+    <time class="minimal-post-date" datetime="{{date format="YYYY-MM-DD"}}">
+        {{date format="MMM DD"}}
+    </time>
+    <div class="minimal-post-main">
+        <h3 class="minimal-post-title">
+            <a class="minimal-post-link" href="{{url}}">{{title}}</a>
+        </h3>
+        {{#if custom_excerpt}}
+            <p class="minimal-post-excerpt">{{custom_excerpt}}</p>
+        {{else if excerpt}}
+            <p class="minimal-post-excerpt">{{excerpt words="24"}}</p>
+        {{/if}}
+    </div>
+</article>

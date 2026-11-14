@@ -128,3 +128,47 @@ def test_about_page_includes_amplifier_of_intent_and_goedecke():
     assert "Amplifier of Intent" in ABOUT_PAGE_HTML
     assert "https://www.seangoedecke.com/writing-is-no-longer-proof-of-work/" in ABOUT_PAGE_HTML
     assert "https://blog.marzeta.pl/writing-is-no-longer-proof-of-work-amplifier-of-intent/" in ABOUT_PAGE_HTML
+
+
+def test_sync_post_to_ghost_strips_blueprint_when_inject_blueprint_is_false(tmp_path):
+    post_dir = tmp_path / "2026-11-14-manifesto"
+    post_dir.mkdir()
+    (post_dir / "post.md").write_text(
+        "# Ghost Blog Post: Manifesto\n\n---\n\n## Post Body\n\nPure manifesto body.\n",
+        encoding="utf-8",
+    )
+    (post_dir / "campaign.yaml").write_text(
+        yaml.safe_dump({
+            "slug": "writing-is-no-longer-proof-of-work-amplifier-of-intent",
+            "title": "Yes, AI Wrote This Blog",
+            "status": "draft",
+            "inject_blueprint": False,
+            "ghost_post_id": "existing_123",
+            "tags": ["AI-SDLC"],
+        }),
+        encoding="utf-8",
+    )
+
+    class FakeGhostExisting:
+        def __init__(self):
+            self.updated_html = None
+
+        def get_post_by_id(self, post_id):
+            return {
+                "id": post_id,
+                "slug": "writing-is-no-longer-proof-of-work-amplifier-of-intent",
+                "html": '<p>Pure manifesto body.</p><!-- AI-SDLC-BLUEPRINT-START --><hr><section id="ai-sdlc-blueprint"><h2>The AI-SDLC Blueprint</h2></section><!-- AI-SDLC-BLUEPRINT-END -->',
+                "tags": [],
+            }
+
+        def ensure_tags(self, tags):
+            return tags
+
+        def update_post_html(self, post_id, html, **kwargs):
+            self.updated_html = html
+            return {"id": post_id, "slug": "writing-is-no-longer-proof-of-work-amplifier-of-intent", "html": html}
+
+    fake = FakeGhostExisting()
+    sync_post_to_ghost(post_dir, fake)
+    assert "ai-sdlc-blueprint" not in fake.updated_html
+    assert "<p>Pure manifesto body.</p>" in fake.updated_html

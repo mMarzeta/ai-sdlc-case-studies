@@ -1,0 +1,294 @@
+/* Minimalist Engineering Theme — Hashimoto / Ronacher (lucumr) Edition */
+:root {
+  --bg-paper: #fbfaf7;
+  --text-primary: #18181b;
+  --text-secondary: #52525b;
+  --text-muted: #71717a;
+  --border-subtle: #e4e4e7;
+  --accent-link: #18181b;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+}
+
+html, body {
+  background-color: var(--bg-paper) !important;
+  color: var(--text-primary) !important;
+  font-family: var(--font-sans) !important;
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Constrain outer layout to single 680px readable column */
+.gh-head-inner,
+.minimal-intro,
+.site-content,
+.gh-foot-inner,
+.gh-canvas > *,
+.kg-width-normal {
+  max-width: 680px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 24px !important;
+  padding-right: 24px !important;
+  box-sizing: border-box !important;
+}
+
+.gh-outer {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Header */
+.gh-head {
+  background-color: var(--bg-paper) !important;
+  border-bottom: none !important;
+  padding-top: 2.75rem !important;
+  padding-bottom: 0 !important;
+  height: auto !important;
+}
+
+.gh-head-inner {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: baseline !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+  padding-bottom: 1.25rem !important;
+  gap: 1rem !important;
+}
+
+.gh-head-brand {
+  display: flex !important;
+  align-items: baseline !important;
+  margin: 0 !important;
+}
+
+.gh-head-logo {
+  font-size: 1.2rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  color: var(--text-primary) !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+}
+
+.gh-burger,
+.gh-head-brand .gh-search {
+  display: none !important;
+}
+
+.minimal-head-nav {
+  display: flex !important;
+  align-items: baseline !important;
+  gap: 1.35rem !important;
+}
+
+.minimal-head-nav .nav {
+  display: flex !important;
+  align-items: baseline !important;
+  gap: 1.35rem !important;
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.minimal-head-nav .nav li {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.minimal-head-nav .nav a {
+  font-size: 0.9rem !important;
+  font-weight: 400 !important;
+  color: var(--text-secondary) !important;
+  text-decoration: none !important;
+}
+
+.minimal-head-nav .nav a:hover {
+  color: var(--text-primary) !important;
+  text-decoration: underline !important;
+  text-underline-offset: 4px !important;
+}
+
+.gh-head-actions {
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Intro Section */
+.minimal-intro {
+  margin-top: 2.25rem !important;
+  margin-bottom: 2.75rem !important;
+}
+
+.minimal-intro p {
+  font-size: 1.02rem !important;
+  line-height: 1.65 !important;
+  color: #27272a !important;
+  margin: 0 !important;
+}
+
+.minimal-intro a {
+  color: var(--text-primary) !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+  text-decoration-color: #a1a1aa !important;
+}
+
+.minimal-intro a:hover {
+  text-decoration-color: var(--text-primary) !important;
+}
+
+/* Chronological Post Feed */
+.post-feed {
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+}
+
+.minimal-year-divider {
+  font-family: var(--font-mono) !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  color: var(--text-muted) !important;
+  letter-spacing: 0.08em !important;
+  margin-top: 2.25rem !important;
+  margin-bottom: 1rem !important;
+  padding-bottom: 0.35rem !important;
+  border-bottom: 1px solid #f0efe9 !important;
+}
+
+.minimal-post-row {
+  display: grid !important;
+  grid-template-columns: 82px 1fr !important;
+  gap: 1.25rem !important;
+  align-items: start !important;
+  padding: 0.65rem 0 !important;
+  border-bottom: none !important;
+  margin: 0 !important;
+}
+
+.minimal-post-date {
+  font-family: var(--font-mono) !important;
+  font-size: 0.84rem !important;
+  color: var(--text-muted) !important;
+  white-space: nowrap !important;
+  line-height: 1.55 !important;
+  padding-top: 0.08rem !important;
+}
+
+.minimal-post-main {
+  min-width: 0 !important;
+}
+
+.minimal-post-title {
+  font-size: 1.02rem !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+  margin: 0 !important;
+}
+
+.minimal-post-link {
+  color: var(--text-primary) !important;
+  text-decoration: none !important;
+}
+
+.minimal-post-link:hover {
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+}
+
+.minimal-post-excerpt {
+  font-size: 0.9rem !important;
+  color: var(--text-secondary) !important;
+  line-height: 1.5 !important;
+  margin: 0.25rem 0 0 0 !important;
+}
+
+/* Single Post / Article Typography */
+.single-post {
+  margin-top: 2.5rem !important;
+}
+
+.article-title, .gh-title {
+  font-size: 1.85rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.025em !important;
+  line-height: 1.25 !important;
+  color: var(--text-primary) !important;
+}
+
+.gh-content p,
+.gh-content li {
+  font-size: 1.02rem !important;
+  line-height: 1.72 !important;
+  color: #27272a !important;
+}
+
+.gh-content pre {
+  background: #18181b !important;
+  color: #f4f4f5 !important;
+  border-radius: 6px !important;
+  padding: 1.1rem 1.25rem !important;
+  font-family: var(--font-mono) !important;
+  font-size: 0.86rem !important;
+  overflow-x: auto !important;
+}
+
+.gh-content code {
+  font-family: var(--font-mono) !important;
+  font-size: 0.88em !important;
+}
+
+/* Restrained AI-SDLC Blueprint Box */
+#ai-sdlc-blueprint {
+  background: #f4f3ee !important;
+  border: 1px solid #d4d4d8 !important;
+  border-left: 3px solid #18181b !important;
+  border-radius: 4px !important;
+  padding: 1.15rem 1.35rem !important;
+  margin: 1.75rem 0 2.25rem 0 !important;
+  font-size: 0.92rem !important;
+  line-height: 1.55 !important;
+  color: var(--text-primary) !important;
+}
+
+#ai-sdlc-blueprint h3,
+#ai-sdlc-blueprint h4,
+#ai-sdlc-blueprint strong {
+  color: var(--text-primary) !important;
+}
+
+#ai-sdlc-blueprint a {
+  color: var(--text-primary) !important;
+  font-weight: 600 !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+}
+
+/* Footer */
+.gh-foot {
+  background-color: var(--bg-paper) !important;
+  border-top: 1px solid var(--border-subtle) !important;
+  margin-top: 4rem !important;
+  padding: 2rem 0 !important;
+  color: var(--text-muted) !important;
+  font-size: 0.85rem !important;
+}
+
+@media (max-width: 640px) {
+  .gh-head-inner {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.75rem !important;
+  }
+  .minimal-head-nav .nav {
+    flex-wrap: wrap !important;
+    gap: 0.85rem !important;
+  }
+  .minimal-post-row {
+    grid-template-columns: 1fr !important;
+    gap: 0.15rem !important;
+  }
+}
