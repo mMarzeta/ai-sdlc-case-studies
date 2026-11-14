@@ -1,0 +1,19 @@
+replacements:
+  - pattern: './src/docs/superpowers/(?:specs|plans)/([A-Za-z0-9._-]+)'
+    replacement: './specs-and-plans/\1'
+  - pattern: './src/blog/[^)\s]+/sources/([A-Za-z0-9._-]+)'
+    replacement: './specs-and-plans/\1'
+  - pattern: 'file://~/projects/([A-Za-z0-9._/-]+)'
+    replacement: './src/\1'
+  - pattern: '~/projects'
+    replacement: '~/projects'
+  - pattern: '~'
+    replacement: '~'
+  - pattern: '\b192\.168\.\d{1,3}\.\d{1,3}\b'
+    replacement: '192.0.2.10'
+
+blocked_patterns:
+  - '(?:GHOST_DB_PASSWORD|GHOST_MAILGUN_PASSWD|SMTP_PASSWORD|MYSQL_ROOT_PASSWORD|WIREGUARD_PRIVATE_KEY|GHOST_ADMIN_API_KEY)\s*=\s*(?!["\x27]?\$\{)(?!["\x27]?<)(?!smtppass\b)(?!testpass\b)[^\s"\x27#]{6,}'
+  - '\bgh[pousr]_[A-Za-z0-9_]{20,}\b'
+  - '-----BEGIN [A-Z ]*PRIVATE KEY-----'
+  - '\bsk-[A-Za-z0-9]{20,}\b'
