@@ -1,10 +1,24 @@
 <!DOCTYPE html>
-<html class="theme-light" lang="{{@site.locale}}">
+<html class="{{#match @custom.color_scheme "Dark"}}theme-dark{{else match @custom.color_scheme "Light"}}theme-light{{/match}}" lang="{{@site.locale}}">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{meta_title}}</title>
+    <script>
+        (function() {
+            try {
+                var saved = localStorage.getItem('marztech-theme');
+                if (saved === 'dark') {
+                    document.documentElement.classList.remove('theme-light');
+                    document.documentElement.classList.add('theme-dark');
+                } else if (saved === 'light') {
+                    document.documentElement.classList.remove('theme-dark');
+                    document.documentElement.classList.add('theme-light');
+                }
+            } catch (e) {}
+        })();
+    </script>
     <link rel="stylesheet" href="{{asset "built/screen.css"}}">
     <link rel="stylesheet" href="{{asset "built/minimal.css"}}">
 
@@ -30,6 +44,10 @@
                     <li><a href="https://github.com/mMarzeta/ai-sdlc-case-studies">AI-SDLC Case Studies (GitHub)</a></li>
                     <li><a href="{{@site.url}}/about/">About</a></li>
                 </ul>
+                <button id="minimal-theme-toggle" class="minimal-theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle light/dark mode">
+                    <svg id="theme-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    <svg id="theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                </button>
                 <button class="gh-search gh-icon-btn" aria-label="Search this site" data-ghost-search>{{> "icons/search"}}</button>
             </nav>
         </div>
@@ -81,6 +99,33 @@
             rows[i].parentNode.insertBefore(div, rows[i]);
             lastYear = yr;
         }
+    }
+
+    var toggleBtn = document.getElementById('minimal-theme-toggle');
+    var moon = document.getElementById('theme-icon-moon');
+    var sun = document.getElementById('theme-icon-sun');
+    function isDark() {
+        var cl = document.documentElement.classList;
+        if (cl.contains('theme-dark')) return true;
+        if (cl.contains('theme-light')) return false;
+        return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    function syncIcon() {
+        var dark = isDark();
+        if (moon && sun) {
+            moon.style.display = dark ? 'none' : 'block';
+            sun.style.display = dark ? 'block' : 'none';
+        }
+    }
+    syncIcon();
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', function() {
+            var nextDark = !isDark();
+            document.documentElement.classList.remove('theme-dark', 'theme-light');
+            document.documentElement.classList.add(nextDark ? 'theme-dark' : 'theme-light');
+            try { localStorage.setItem('marztech-theme', nextDark ? 'dark' : 'light'); } catch (e) {}
+            syncIcon();
+        });
     }
 })();
 </script>
