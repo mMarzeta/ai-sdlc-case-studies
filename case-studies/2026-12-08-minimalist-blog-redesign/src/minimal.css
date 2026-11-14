@@ -11,14 +11,18 @@ html.theme-light {
   --code-bg: #18181b;
   --code-fg: #f4f4f5;
   --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
-  --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
   /* Map Dawn theme CSS variables to our warm-paper light palette */
   --white-color: #fbfaf7;
+  --color-white: #fbfaf7;
   --lighter-gray-color: #f4f3ee;
+  --color-lighter-gray: #f4f3ee;
   --light-gray-color: #e4e4e7;
+  --color-light-gray: #e4e4e7;
   --mid-gray-color: #71717a;
   --dark-gray-color: #27272a;
+  --color-darkgrey: #27272a;
   --primary-text-color: #18181b;
   --secondary-text-color: #52525b;
 }
@@ -32,14 +36,18 @@ html.theme-light {
     --text-muted: #71717a;
     --border-subtle: #27272a;
     --border-strong: #3f3f46;
-    --code-bg: #0c0c0b;
+    --code-bg: #111110;
     --code-fg: #e4e4e7;
 
     --white-color: #141413;
+    --color-white: #141413;
     --lighter-gray-color: #1c1c1a;
+    --color-lighter-gray: #1c1c1a;
     --light-gray-color: #27272a;
+    --color-light-gray: #27272a;
     --mid-gray-color: #a1a1aa;
     --dark-gray-color: #ecebe6;
+    --color-darkgrey: #ecebe6;
     --primary-text-color: #ecebe6;
     --secondary-text-color: #a1a1aa;
   }
@@ -53,15 +61,19 @@ html.theme-dark {
   --text-muted: #71717a;
   --border-subtle: #27272a;
   --border-strong: #3f3f46;
-  --code-bg: #0c0c0b;
+  --code-bg: #111110;
   --code-fg: #e4e4e7;
 
   /* Map Dawn theme CSS variables to our warm-charcoal dark palette */
   --white-color: #141413;
+  --color-white: #141413;
   --lighter-gray-color: #1c1c1a;
+  --color-lighter-gray: #1c1c1a;
   --light-gray-color: #27272a;
+  --color-light-gray: #27272a;
   --mid-gray-color: #a1a1aa;
   --dark-gray-color: #ecebe6;
+  --color-darkgrey: #ecebe6;
   --primary-text-color: #ecebe6;
   --secondary-text-color: #a1a1aa;
 }
@@ -326,7 +338,22 @@ body {
   padding: 16px 20px !important;
   font-family: var(--font-mono) !important;
   font-size: 13.5px !important;
+  line-height: 1.5 !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+  -webkit-font-smoothing: auto !important;
   overflow-x: auto !important;
+}
+
+.gh-content pre code {
+  font-family: inherit !important;
+  font-size: inherit !important;
+  line-height: inherit !important;
+  font-weight: inherit !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  color: inherit !important;
 }
 
 .gh-content code {
@@ -339,6 +366,40 @@ body {
   border: 1px solid var(--border-subtle) !important;
   border-radius: 4px !important;
   padding: 2px 5px !important;
+}
+
+/* Tables: prevent Dawn nowrap clipping and remove hardcoded #fff scroll gradients */
+.gh-content table:not(.gist table) {
+  display: table !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  background: transparent !important;
+  border-collapse: collapse !important;
+  font-size: 14.5px !important;
+  line-height: 1.5 !important;
+}
+
+.gh-content table:not(.gist table) td:first-child,
+.gh-content table:not(.gist table) td:last-child {
+  background-image: none !important;
+}
+
+.gh-content table:not(.gist table) th {
+  background-color: var(--bg-elevated) !important;
+  color: var(--text-primary) !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+}
+
+.gh-content table:not(.gist table) td,
+.gh-content table:not(.gist table) th {
+  border: 1px solid var(--border-subtle) !important;
+  padding: 10px 12px !important;
+  vertical-align: top !important;
+  color: var(--text-primary) !important;
 }
 
 /* Restrained AI-SDLC Blueprint Box */
