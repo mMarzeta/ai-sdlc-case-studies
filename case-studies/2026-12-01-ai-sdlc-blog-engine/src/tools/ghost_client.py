@@ -40,20 +40,30 @@ def make_ghost_jwt(api_key: str, now: int | None = None) -> str:
     return f"{header_b64}.{payload_b64}.{sig_b64}"
 
 
+def _format_summary_point(pt: Any) -> str:
+    if isinstance(pt, dict):
+        return "; ".join(f"{k}: {v}" for k, v in pt.items())
+    return str(pt)
+
+
 def render_blueprint_html(
     metrics: dict[str, Any],
     case_study_url: str,
-    summary_points: list[str] | None = None,
+    summary_points: list[Any] | None = None,
 ) -> str:
-    code_loc = metrics.get("code_loc", "N/A")
-    test_count = metrics.get("test_count", "N/A")
+    code_loc = str(metrics.get("code_loc", "N/A"))
+    if code_loc.isdigit():
+        code_loc = f"{code_loc} LOC implementation"
+    test_count = str(metrics.get("test_count", "N/A"))
+    if test_count.isdigit():
+        test_count = f"{test_count} automated tests & verification checks"
     specs_count = metrics.get("specs_count", "N/A")
     plans_count = metrics.get("plans_count", "N/A")
     models = ", ".join(metrics.get("models_used", ["Gemini 4 Argon (High)"]))
 
     points_html = ""
     if summary_points:
-        items = "".join(f"<li>{html_lib.escape(str(pt))}</li>" for pt in summary_points)
+        items = "".join(f"<li>{html_lib.escape(_format_summary_point(pt))}</li>" for pt in summary_points)
         points_html = f"<ul>{items}</ul>"
 
     safe_url = html_lib.escape(case_study_url, quote=True)
@@ -63,8 +73,8 @@ def render_blueprint_html(
         "<h2>The AI-SDLC Blueprint (How This Was Engineered)</h2>"
         "<p><em>Every project on this blog is built using a deterministic, spec-driven AI Software Development Life Cycle (SDLC) — turning autonomous coding agents into disciplined production engineering pipelines with zero architectural drift.</em></p>"
         "<ul>"
-        f"<li><strong>Production Footprint:</strong> {html_lib.escape(str(code_loc))} LOC implementation</li>"
-        f"<li><strong>Verification &amp; Quality Gate:</strong> {html_lib.escape(str(test_count))} automated tests &amp; verification checks</li>"
+        f"<li><strong>Production Footprint:</strong> {html_lib.escape(code_loc)}</li>"
+        f"<li><strong>Verification &amp; Quality Gate:</strong> {html_lib.escape(test_count)}</li>"
         f"<li><strong>Spec-First Governance:</strong> {html_lib.escape(str(specs_count))} design specs &amp; {html_lib.escape(str(plans_count))} step-by-step TDD implementation plans written before code</li>"
         f"<li><strong>Agentic Stack:</strong> {html_lib.escape(models)} orchestrated in AGY</li>"
         "</ul>"
@@ -89,25 +99,17 @@ def strip_blueprint_html(existing_html: str) -> str:
         r'(?:<hr\s*/?>\s*)?<section[^>]*id=["\']ai-sdlc-blueprint["\'][^>]*>.*?</section>',
         re.DOTALL | re.IGNORECASE,
     )
-    return pattern_section.sub("", cleaned).rstrip()
+    cleaned = pattern_section.sub("", cleaned)
+    pattern_lexical_h2 = re.compile(
+        r'(?:<hr\s*/?>\s*)?<h2[^>]*>\s*The AI-SDLC Blueprint\b.*$',
+        re.DOTALL | re.IGNORECASE,
+    )
+    return pattern_lexical_h2.sub("", cleaned).rstrip()
 
 
 def inject_blueprint_html(existing_html: str, blueprint_html: str) -> str:
-    pattern_markers = re.compile(
-        re.escape(BLUEPRINT_START_MARKER) + r".*?" + re.escape(BLUEPRINT_END_MARKER),
-        re.DOTALL,
-    )
-    if pattern_markers.search(existing_html):
-        return pattern_markers.sub(lambda _: blueprint_html, existing_html, count=1)
-
-    pattern_section = re.compile(
-        r'(?:<hr\s*/?>\s*)?<section[^>]*id=["\']ai-sdlc-blueprint["\'][^>]*>.*?</section>',
-        re.DOTALL | re.IGNORECASE,
-    )
-    if pattern_section.search(existing_html):
-        return pattern_section.sub(lambda _: blueprint_html, existing_html, count=1)
-
-    return existing_html.rstrip() + "\n" + blueprint_html
+    base = strip_blueprint_html(existing_html)
+    return base + "\n" + blueprint_html if base else blueprint_html
 
 
 class GhostAdminClient:

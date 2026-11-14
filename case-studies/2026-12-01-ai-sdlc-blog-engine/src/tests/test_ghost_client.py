@@ -6,6 +6,7 @@ from tools.ghost_client import (
     inject_blueprint_html,
     make_ghost_jwt,
     render_blueprint_html,
+    strip_blueprint_html,
 )
 
 
@@ -138,3 +139,25 @@ def test_create_post_html_sends_source_html_and_scheduled_published_at(monkeypat
     assert post_payload["published_at"] == "2026-12-01T08:00:00.000Z"
     assert post_payload["featured"] is True
     assert post_payload["custom_excerpt"] == "Short excerpt"
+
+
+def test_inject_and_strip_blueprint_after_ghost_lexical_roundtrip():
+    lexical_roundtripped_html = (
+        "<p>Main article body.</p>"
+        '<hr><h2 id="the-ai-sdlc-blueprint-how-this-was-engineered">The AI-SDLC Blueprint (How This Was Engineered)</h2>'
+        "<p><em>Every project on this blog is built using a deterministic...</em></p>"
+        '<hr><h2 id="the-ai-sdlc-blueprint-how-this-was-engineered-1">The AI-SDLC Blueprint (How This Was Engineered)</h2>'
+        "<p>Duplicate section after lexical roundtrip.</p>"
+    )
+    stripped = strip_blueprint_html(lexical_roundtripped_html)
+    assert stripped == "<p>Main article body.</p>"
+
+    bp = render_blueprint_html(
+        metrics={"code_loc": "1,450 LOC Python", "test_count": "18 automated pytest tests", "specs_count": 2, "plans_count": 2},
+        case_study_url="https://github.com/mMarzeta/ai-sdlc-case-studies",
+        summary_points=[{"Key point": "Value explanation"}],
+    )
+    assert "LOC Python LOC" not in bp
+    assert "Key point: Value explanation" in bp
+    reinjected = inject_blueprint_html(lexical_roundtripped_html, bp)
+    assert reinjected.count("The AI-SDLC Blueprint (How This Was Engineered)") == 1
