@@ -402,6 +402,11 @@ body {
   color: var(--text-primary) !important;
 }
 
+.gh-content table:not(.gist table) td:first-child,
+.gh-content table:not(.gist table) th:first-child {
+  min-width: 115px !important;
+}
+
 /* Restrained AI-SDLC Blueprint Box */
 #ai-sdlc-blueprint {
   background: var(--bg-elevated) !important;
